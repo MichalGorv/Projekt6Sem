@@ -22,6 +22,9 @@ if (!$conn) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <style>
     img {
@@ -80,12 +83,86 @@ if (!$conn) {
             <h3 class='text-center'>Twój koszyk</h3>
             <div id="displayCheckout">
             <?php 
-
+                if(!empty($_SESSION['koszyk'])){
+                    $outputTable = '';
+                    $total = 0;
+                    $outputTable .= "<table class='table table-bordered'><thead><tr><td>nazwa</td><td>cena</td><td>ilosc</td><td>Action</td> </tr></thead>";
+                    foreach($_SESSION['koszyk'] as $key => $value){
+                        $outputTable .= "<tr><td>".$value['p_nazwa']."</td><td>".($value['p_cena'] * $value['p_ilosc']) ."</td><td>".$value['p_ilosc']."</td><td><button id=".$value['p_id']." class='btn btn-danger delete'>Delete</button></td></tr>";  
+                        $total = $total + ($value['p_cena'] * $value['p_ilosc']);
+                    }
+                    $outputTable .= "</table>";
+                    $outputTable .= "<div class='text-center'><b>Suma: ".$total."</b></div>";
+                    echo $outputTable;
+                }
 			?>
             </div> 
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+	alldeleteBtn = document.querySelectorAll('.delete')
+	alldeleteBtn.forEach(onebyone => {
+	onebyone.addEventListener('click',deleteINsession)
+	})
+
+	function deleteINsession(){
+		removable_id = this.id;
+		$.ajax({
+			url:'koszyk.php',
+			method:'POST',
+			dataType:'json',
+			data:{ 
+				id_to_remove:removable_id,
+				action:'remove' 
+			},
+		success:function(data){
+			$('#displayCheckout').html(data);
+			alldeleteBtn = document.querySelectorAll('.delete')
+			alldeleteBtn.forEach(onebyone => {
+			onebyone.addEventListener('click',deleteINsession)
+			})
+		}
+		})
+		.fail( function(xhr, textStatus, errorThrown) {
+			alert(xhr.responseText);
+		});
+
+	}
+	$('.add').click(function() { 
+		id = $(this).data('id');
+		nazwa = $('#nazwa' + id).val();
+		cena = $('#cena' + id).val();
+		ilosc = $('#ilosc' + id).val();
+			$.ajax({
+				url:'koszyk.php',
+				method:'POST',
+				dataType:'json',
+				data:{
+					koszyk_id : id,
+					koszyk_nazwa : nazwa,
+					koszyk_cena : cena,
+					koszyk_ilosc : ilosc,
+					action:'add'
+				},
+				success:function(data){
+					$('#displayCheckout').html(data);
+					 alldeleteBtn = document.querySelectorAll('.delete')
+					 alldeleteBtn.forEach(onebyone => {
+					 onebyone.addEventListener('click',deleteINsession)
+					 })
+				}
+			})
+			.fail( function(xhr, textStatus, errorThrown) {
+				alert(xhr.responseText);
+			});
+			}
+	)
+		}
+)
+</script>
 
 </body>
 </html>
