@@ -25,6 +25,7 @@ if (!$conn) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="style logowanie popup.css"/>
 
     <style>
     img {
@@ -45,6 +46,20 @@ if (!$conn) {
 
 <body>
 <div class="container">
+
+	<button onclick="openLoginForm()">Logowanie</button>
+	<div class="popup-overlay">
+		<div class="popup">
+			<div class="popup-close" onclick="closeLoginForm()">&times;</div>
+				<form class='login-form', action="walidacja.php", method="post">
+					<center><h1 class="main-heading">Logowanie</h1></center>
+					<input type="text"name='email' placeholder="email", required/>
+					<input type="password" name='haslo' placeholder="hasło", required/>
+					<button>zaloguj</button>
+				</form>
+		</div>
+	</div>
+
 	<div class="row">
 		<div class="col-md-7">
 			<div class="row">
@@ -54,11 +69,11 @@ if (!$conn) {
 				$sql = "SELECT * FROM produkty";
 				$result = mysqli_query($conn, $sql); 
 				while($row = mysqli_fetch_assoc($result)) {
-				// echo $row['id'] ." ". $row['nazwa'] ." ". $row['image'] ." ". $row['cena']."<br>";
+				// echo $row['id'] ." ". $row['nazwa_produktu'] ." ". $row['grafika'] ." ". $row['cena']."<br>";
 				?>
 				<div class="col-md-3 text-center mt-5">
-					<img src="grafiki/<?php echo $row['image']?>" alt="">
-					<h3><?php echo $row['nazwa']?></h3>
+					<img src="grafiki/<?php echo $row['grafika']?>" alt="">
+					<h3><?php echo $row['nazwa_produktu']?></h3>
 					<h6>cena: <?php echo $row['cena']?></h6>
 					<div class="form-group">
 						<select class="form-control" id="ilosc<?php echo $row['id']?>">
@@ -67,7 +82,7 @@ if (!$conn) {
 							<option>3</option>
 							<option>4</option>
 						</select>
-						<input type="hidden" id="nazwa<?php echo $row['id']?>" value='<?php echo $row['nazwa']?>'>
+						<input type="hidden" id="nazwa_produktu<?php echo $row['id']?>" value='<?php echo $row['nazwa_produktu']?>'>
 						<input type="hidden" id="cena<?php echo $row['id']?>" value='<?php echo $row['cena']?>'>
 						<button class='btn btn-danger add' data-id="<?php echo $row['id']?>">Do koszyka</button>
 					</div>
@@ -86,9 +101,9 @@ if (!$conn) {
                 if(!empty($_SESSION['koszyk'])){
                     $outputTable = '';
                     $total = 0;
-                    $outputTable .= "<table class='table table-bordered'><thead><tr><td>nazwa</td><td>cena</td><td>ilosc</td><td>Action</td> </tr></thead>";
+                    $outputTable .= "<table class='table table-bordered'><thead><tr><td>nazwa_produktu</td><td>cena</td><td>ilosc</td><td>Action</td> </tr></thead>";
                     foreach($_SESSION['koszyk'] as $key => $value){
-                        $outputTable .= "<tr><td>".$value['p_nazwa']."</td><td>".($value['p_cena'] * $value['p_ilosc']) ."</td><td>".$value['p_ilosc']."</td><td><button id=".$value['p_id']." class='btn btn-danger delete'>Delete</button></td></tr>";  
+                        $outputTable .= "<tr><td>".$value['p_nazwa_produktu']."</td><td>".($value['p_cena'] * $value['p_ilosc']) ."</td><td>".$value['p_ilosc']."</td><td><button id=".$value['p_id']." class='btn btn-danger delete'>Delete</button></td></tr>";  
                         $total = $total + ($value['p_cena'] * $value['p_ilosc']);
                     }
                     $outputTable .= "</table>";
@@ -133,7 +148,7 @@ $(document).ready(function() {
 	}
 	$('.add').click(function() { 
 		id = $(this).data('id');
-		nazwa = $('#nazwa' + id).val();
+		nazwa_produktu = $('#nazwa_produktu' + id).val();
 		cena = $('#cena' + id).val();
 		ilosc = $('#ilosc' + id).val();
 			$.ajax({
@@ -142,7 +157,7 @@ $(document).ready(function() {
 				dataType:'json',
 				data:{
 					koszyk_id : id,
-					koszyk_nazwa : nazwa,
+					koszyk_nazwa_produktu : nazwa_produktu,
 					koszyk_cena : cena,
 					koszyk_ilosc : ilosc,
 					action:'add'
@@ -162,6 +177,14 @@ $(document).ready(function() {
 	)
 		}
 )
+</script>
+<script>
+function openLoginForm(){
+  document.body.classList.add("showLoginForm");
+}
+function closeLoginForm(){
+  document.body.classList.remove("showLoginForm");
+}
 </script>
 
 </body>
