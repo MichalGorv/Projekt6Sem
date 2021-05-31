@@ -17,7 +17,7 @@ if(isset($_POST['koszyk_id'])){
                     if($isalreadyExist < 1){
                         $itemArray = array(
                             'p_id' => $_POST['koszyk_id'],
-                            'p_nazwa' => $_POST['koszyk_nazwa'], 
+                            'p_nazwa_produktu' => $_POST['koszyk_nazwa_produktu'], 
                             'p_cena' => $_POST['koszyk_cena'],
                             'p_ilosc' => $_POST['koszyk_ilosc'] 
                         );
@@ -27,11 +27,11 @@ if(isset($_POST['koszyk_id'])){
                 }else{
                     $itemArray = array(
                         'p_id' => $_POST['koszyk_id'],
-                        'p_nazwa' => $_POST['koszyk_nazwa'], 
+                        'p_nazwa_produktu' => $_POST['koszyk_nazwa_produktu'], 
                         'p_cena' => $_POST['koszyk_cena'],
                         'p_ilosc' => $_POST['koszyk_ilosc'] 
                     );
-                    $_SESSION['koszyk'][]  = $itemArray;
+                    $_SESSION['koszyk'][] = $itemArray;
                 }
            }
 }
@@ -44,19 +44,22 @@ if($_POST['action'] == 'remove'){
     }
 }
 
-
 if(!empty($_SESSION['koszyk'])){
     $outputTable = '';
     $total = 0;
-    $outputTable .= "<table class='table table-bordered'><thead><tr><td>nazwa</td><td>cena</td><td>ilosc</td><td>Usuń</td></tr></thead>";
+    $outputTable .= "<table class='table table-bordered'><thead><tr><td>nazwa_produktu</td><td>cena</td><td>ilosc</td><td>Usuń</td></tr></thead>";
     foreach($_SESSION['koszyk'] as $key => $value){
-        $outputTable .= "<tr><td>".$value['p_nazwa']."</td><td>".($value['p_cena'] * $value['p_ilosc']) ."</td><td>".$value['p_ilosc']."</td><td><button id=".$value['p_id']." class='btn btn-danger delete'>Delete</button></td></tr>";  
+        $outputTable .= "<tr><td>".$value['p_nazwa_produktu']."</td><td>".($value['p_cena'] * $value['p_ilosc']) ."</td><td>".$value['p_ilosc']."</td><td><button id=".$value['p_id']." class='btn btn-danger delete'>Usuń</button></td></tr>";  
         $total = $total + ($value['p_cena'] * $value['p_ilosc']);
     }
     $outputTable .= "</table>";
-    $outputTable .= "<div class='text-center'><b>Total: ".$total."</b></div>";
+    $outputTable .= "<div class='text-center'><b>Suma: ".$total."</b></div>";
 
 }
 
+
 echo json_encode($outputTable);
+?>
+
+
 
