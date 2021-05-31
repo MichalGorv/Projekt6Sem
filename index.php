@@ -47,6 +47,7 @@ if (!$conn) {
 <body>
 <div class="container">
 
+	<a href="rejestracja.php">rejestracja</a>
 	<button onclick="openLoginForm()">Logowanie</button>
 	<div class="popup-overlay">
 		<div class="popup">
@@ -72,6 +73,7 @@ if (!$conn) {
 				// echo $row['id'] ." ". $row['nazwa_produktu'] ." ". $row['grafika'] ." ". $row['cena']."<br>";
 				?>
 				<div class="col-md-3 text-center mt-5">
+					
 					<img src="grafiki/<?php echo $row['grafika']?>" alt="">
 					<h3><?php echo $row['nazwa_produktu']?></h3>
 					<h6>cena: <?php echo $row['cena']?></h6>
@@ -98,12 +100,13 @@ if (!$conn) {
             <h3 class='text-center'>Twój koszyk</h3>
             <div id="displayCheckout">
             <?php 
+				
                 if(!empty($_SESSION['koszyk'])){
                     $outputTable = '';
                     $total = 0;
-                    $outputTable .= "<table class='table table-bordered'><thead><tr><td>nazwa_produktu</td><td>cena</td><td>ilosc</td><td>Action</td> </tr></thead>";
+                    $outputTable .= "<table class='table table-bordered'><thead><tr><td>nazwa_produktu</td><td>cena</td><td>ilosc</td><td>Usuń</td> </tr></thead>";
                     foreach($_SESSION['koszyk'] as $key => $value){
-                        $outputTable .= "<tr><td>".$value['p_nazwa_produktu']."</td><td>".($value['p_cena'] * $value['p_ilosc']) ."</td><td>".$value['p_ilosc']."</td><td><button id=".$value['p_id']." class='btn btn-danger delete'>Delete</button></td></tr>";  
+                        $outputTable .= "<tr><td>".$value['p_nazwa_produktu']."</td><td>".($value['p_cena'] * $value['p_ilosc']) ."</td><td>".$value['p_ilosc']."</td><td><button id=".$value['p_id']." class='btn btn-danger delete'>Usuń</button></td></tr>";  
                         $total = $total + ($value['p_cena'] * $value['p_ilosc']);
                     }
                     $outputTable .= "</table>";
